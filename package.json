@@ -1,0 +1,29 @@
+{
+  "name": "exp",
+  "version": "1.0.0",
+  "description": "Export Import sdk ",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "sdks":"sdks"
+  },
+  "workspaces": [
+    "sdks/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ts":"node ./scripts/ts/build.js",
+    "build:py":"node ./scripts/py/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerinthomascarmel/Exp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jerinthomascarmel/Exp/issues"
+  },
+  "homepage": "https://github.com/jerinthomascarmel/Exp#readme"
+}

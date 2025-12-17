@@ -1,18 +1,24 @@
 {
-  "name": "export-sdk",
+  "name": "export-ts",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
+  "main": "./dist/index.js",
+  "module":"./dist/index.js",
+  "exports":{
+    ".":{
+      "require":{
+        "types":"./dist/index.d.ts",
+        "default":"./dist/index.js"
+      },
+      "import":{
+        "types":"./dist/index.d.ts",
+        "default":"./dist/index.js"
+      }
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "tsc && node ./dist/index.js",
-    "build": "tsc",
-    "example1": "tsc && node ./dist/examples/example1/client.js",
-    "example2": "tsc && node ./dist/examples/example2/demo.js",
-    "example3": "tsc && node ./dist/examples/example3/functions.js",
-    "example4": "tsc && node ./dist/examples/example4/client.js",
-    "server4":"tsc && node ./dist/examples/example4/server.js"
-
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

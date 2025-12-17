@@ -1,21 +1,21 @@
-import { StdioImporterTransport } from "../../importer/stdio.js";
-import { Importer } from "../../importer/index.js"
 
+import { Importer } from "export-ts"
+import  type { StdioParameters } from "export-ts";
 
 const main =async ()=>{
 
-  const transport = new StdioImporterTransport({
-      command: "node",
-      args: ["./dist/examples/example4/server.js"]
-    });
+  const params : StdioParameters ={
+    command: "node",
+    args: ["./dist/server.js"]
+  }
 
-  const importer = new Importer(); 
-  await importer.import(transport);
+  const importer = new Importer(params); 
+  await importer.connect();
 
   const result = await importer.callFunction({name:"greeting", arguments:{name:"jerin" , age: 22} })
   console.log(result)
   console.log(typeof result)
-  transport.close();
+  importer.close();
   
 }
 

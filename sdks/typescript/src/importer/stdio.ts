@@ -5,8 +5,7 @@ import { ChildProcess } from "node:child_process";
 import { ReadBuffer , serializeMessage } from "../shared/stdio.js";
 
 
-
-export type StdioImporterParameters = {
+export type StdioParameters = {
   /**
    * The executable to run to start the server.
    */
@@ -29,7 +28,7 @@ export type StdioImporterParameters = {
 export class StdioImporterTransport implements Transport{
 
     private _process?: ChildProcess;
-    private _params: StdioImporterParameters;
+    private _params: StdioParameters;
     private _abortController: AbortController = new AbortController();
     private _readBuffer: ReadBuffer = new ReadBuffer();
 
@@ -38,7 +37,7 @@ export class StdioImporterTransport implements Transport{
     onerror?: (error: Error) => void;
     onmessage?: (message: JSONRPCMessage) => void;
 
-    constructor(server: StdioImporterParameters) {
+    constructor(server: StdioParameters) {
       this._params = server;  
     }
 

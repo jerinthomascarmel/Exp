@@ -1,5 +1,5 @@
 import { Protocol } from "../shared/protocol.js";
-import { Transport } from "../shared/transport.js";
+
 import { CallFunctionRequest ,
     CallFunctionResultSchema ,
     CompatibilityCallToolResultSchema,
@@ -11,25 +11,18 @@ import { CallFunctionRequest ,
     } from "../types.js";
 
 import { StdioImporterTransport } from "../importer/stdio.js";
-    
+import { StdioParameters } from "../importer/stdio.js";
 
 export class Importer extends Protocol{
-
     private _serverCapabilities?: ServerCapabilities;
-
-    constructor(){
-        super() 
+   
+    constructor(params: StdioParameters){
+        super(new StdioImporterTransport(params)) ;
     }
 
-    async import(transport:Transport){
-        // this function is for getting familiar names
-        await this.connect(transport);
-    }
-
-    async connect(transport: Transport) {
-        await super.connect(transport); 
+    async connect() {
+        await super.connect(); 
         // additional setup for Importer can be done here
-
         try{
             const result = await this.request(
                 {

@@ -104,15 +104,15 @@ class FuncMetadata(BaseModel):
 
         Note: we return unstructured content here **even though the lowlevel server
         function call handler provides generic backwards compatibility serialization of
-        structured content**. This is for FastMCP backwards compatibility: we need to
-        retain FastMCP's ad hoc conversion logic for constructing unstructured output
+        structured content**. This is for Exporter backwards compatibility: we need to
+        retain Exporter's ad hoc conversion logic for constructing unstructured output
         from function return values, whereas the lowlevel server simply serializes
         the structured output.
         """
         if isinstance(result, CallFunctionResult):
             if self.output_schema is not None:
                 assert self.output_model is not None, "Output model must be set if output schema is defined"
-                self.output_model.model_validate(result.structuredContent)
+                self.output_model.model_validate(result.structuredResult)
             return result
 
         unstructured_content = _convert_to_content(result)
@@ -220,7 +220,7 @@ def func_metadata(
     try:
         sig = inspect.signature(func, eval_str=True)
     except NameError as e:  # pragma: no cover
-        # This raise could perhaps be skipped, and we (FastMCP) just call
+        # This raise could perhaps be skipped, and we (Exporter) just call
         # model_rebuild right before using it 🤷
         raise InvalidSignature(
             f"Unable to evaluate type annotations for callable {func.__name__!r}") from e
@@ -512,7 +512,7 @@ def _convert_to_content(
     """
     Convert a result to a sequence of content objects.
 
-    Note: This conversion logic comes from previous versions of FastMCP and is being
+    Note: This conversion logic comes from previous versions of Exporter and is being
     retained for purposes of backwards compatibility. It produces different unstructured
     output than the lowlevel server function call handler, which just serializes structured
     content verbatim.

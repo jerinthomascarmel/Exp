@@ -19,12 +19,15 @@ export abstract class Protocol {
     onclose? :() => void; 
     onerror? :(error :Error) => void; 
 
-    constructor(){}
+    constructor(_transport: Transport){
+        this._transport = _transport;
+    }
 
 
-    async connect(transport: Transport) {
-        this._transport = transport;
-
+    async connect() {
+        if(!this._transport){
+            throw new Error("Initialize Transport first !");
+        }
         this._transport.onclose = () => this._onclose();
         this._transport.onerror = (error) => this._onerror(error);
         this._transport.onmessage = (message) =>{
@@ -218,6 +221,5 @@ export abstract class Protocol {
       return Promise.resolve(handler(requestSchema.parse(request)));
     });
   }
-
 
 }

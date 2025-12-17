@@ -1,4 +1,4 @@
-"""Logging utilities for FastMCP."""
+"""Logging utilities for Exporter."""
 
 import logging
 from typing import Literal
@@ -8,7 +8,7 @@ def get_logger(name: str) -> logging.Logger:
     """Get a logger nested under MCPnamespace.
 
     Args:
-        name: the name of the logger, which will be prefixed with 'FastMCP.'
+        name: the name of the logger, which will be prefixed with 'Exporter.'
 
     Returns:
         a configured logger instance

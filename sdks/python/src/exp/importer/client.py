@@ -1,14 +1,14 @@
-from exp.importer.stdio import StdioClient, StdioServerParameters
+from exp.importer.stdio import StdioClient, StdioParameters
 from exp.importer.session import ClientSession
 from typing import Any
 from datetime import timedelta
 import exp.types as types
 
 
-class MCPClient:
+class Importer:
     def __init__(
         self,
-        server: StdioServerParameters
+        server: StdioParameters
     ) -> None:
         self._stdio_client = StdioClient(server=server)
         self._session: ClientSession = None
@@ -50,7 +50,7 @@ class MCPClient:
         )
 
     async def list_functions(self) -> types.ListFunctionsResult:
-    
+
         return await self._session.list_functions()
 
     async def initialize(self) -> None:

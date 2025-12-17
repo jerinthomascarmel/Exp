@@ -19,7 +19,7 @@ import exp.types as types
 from exp.exporter.lowlevel.func_inspection import create_call_wrapper
 from exp.exporter.session import ServerSession
 from exp.shared.exceptions import McpError
-from exp.shared.message import  SessionMessage
+from exp.shared.message import SessionMessage
 from exp.shared.session import RequestResponder
 
 logger = logging.getLogger(__name__)
@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 RequestT = TypeVar("RequestT", default=Any)
 
 # type aliases for function call results
-StructuredContent: TypeAlias = dict[str, Any]
-UnstructuredContent: TypeAlias = Iterable[types.ContentBlock]
-CombinationContent: TypeAlias = tuple[UnstructuredContent, StructuredContent]
+StructuredResult: TypeAlias = dict[str, Any]
+UnstructuredResult: TypeAlias = Iterable[types.ContentBlock]
+CombinationContent: TypeAlias = tuple[UnstructuredResult, StructuredResult]
 
 
 class Server(Generic[RequestT]):
@@ -109,16 +109,16 @@ class Server(Generic[RequestT]):
         The handler validates input against inputSchema (if validate_input=True), calls the function function,
         and builds a CallFunctionResult with the results:
         - Unstructured content (iterable of ContentBlock): returned in content
-        - Structured content (dict): returned in structuredContent, serialized JSON text returned in content
-        - Both: returned in content and structuredContent
+        - Structured content (dict): returned in structuredResult, serialized JSON text returned in content
+        - Both: returned in content and structuredResult
 
-        If outputSchema is defined, validates structuredContent or errors if missing.
+        If outputSchema is defined, validates structuredResult or errors if missing.
         """
 
         def decorator(
             func: Callable[
                 ...,
-                Awaitable[UnstructuredContent | StructuredContent |
+                Awaitable[UnstructuredResult | StructuredResult |
                           CombinationContent | types.CallFunctionResult],
             ],
         ):
@@ -142,8 +142,8 @@ class Server(Generic[RequestT]):
                     results = await func(function_name, arguments)
 
                     # output normalization
-                    unstructured_content: UnstructuredContent
-                    maybe_structured_content: StructuredContent | None
+                    unstructured_content: UnstructuredResult
+                    maybe_structured_content: StructuredResult | None
                     if isinstance(results, types.CallFunctionResult):
                         return types.ServerResult(results)
                     elif isinstance(results, tuple) and len(results) == 2:
@@ -153,13 +153,13 @@ class Server(Generic[RequestT]):
                     elif isinstance(results, dict):
                         # function returned structured content only
                         maybe_structured_content = cast(
-                            StructuredContent, results)
+                            StructuredResult, results)
                         unstructured_content = [types.TextContent(
                             type="text", text=json.dumps(results, indent=2))]
                     elif hasattr(results, "__iter__"):  # pragma: no cover
                         # function returned unstructured content only
                         unstructured_content = cast(
-                            UnstructuredContent, results)
+                            UnstructuredResult, results)
                         maybe_structured_content = None
                     else:  # pragma: no cover
                         return self._make_error_result(f"Unexpected return type from function: {type(results).__name__}")
@@ -181,7 +181,7 @@ class Server(Generic[RequestT]):
                     return types.ServerResult(
                         types.CallFunctionResult(
                             content=list(unstructured_content),
-                            structuredContent=maybe_structured_content,
+                            structuredResult=maybe_structured_content,
                             isError=False,
                         )
                     )

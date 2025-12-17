@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type { JsonSchemaType } from "../validation/types.js";
-
 import { Protocol  } from "../shared/protocol.js";
-import { Transport } from "../shared/transport.js"
+
 import 
     { 
         CallFunctionRequestSchema,
@@ -29,19 +28,14 @@ export class Exporter extends Protocol{
     private _jsonSchemaValidator : jsonSchemaValidator = new AjvJsonSchemaValidator();
 
     constructor(){
-        super() 
+        super(new StdioExporterTransport());
         this.setInitializeRequestHandlers();
         this.setFunctionRequestHandlers(); 
     }
 
 
-    async connect(transport: Transport): Promise<void> {
-        await super.connect(transport);
-    }
-
-    async expose():Promise<void>{
-        const transport = new StdioExporterTransport(); 
-        this.connect(transport)
+    async connect(): Promise<void> {
+        await super.connect();
     }
 
     // decorators 
@@ -89,7 +83,7 @@ export class Exporter extends Protocol{
                                 : EMPTY_OBJECT_JSON_SCHEMA) as FunctionT["outputSchema"]
 
         const registeredFunction :RegisterFunction = {
-            title: name , 
+            name: name , 
             description:description, 
             inputSchema: inputJsonSchema, 
             outputSchema : outputJsonSchema,
@@ -125,7 +119,7 @@ export class Exporter extends Protocol{
                     functions: Object.fromEntries(
                         Object.entries(this.registeredFunctions).map(([key , value])=>[
                             key,
-                            {name:value.title, inputSchema: value.inputSchema , outputSchema:value.outputSchema}
+                            {name:value.name, inputSchema: value.inputSchema , outputSchema:value.outputSchema}
                         ]) 
                     ), 
                     classes : {}
@@ -243,12 +237,12 @@ const EMPTY_OBJECT_JSON_SCHEMA = {
     properties: {}
 };
 
-    export type RegisterFunction = {
-        title: string; 
-        description?: string;
-        inputSchema: FunctionT["inputSchema"]
-        outputSchema: FunctionT["outputSchema"];
-        callback:Function;
-    }
+export type RegisterFunction = {
+    name: string; 
+    description?: string;
+    inputSchema: FunctionT["inputSchema"]
+    outputSchema: FunctionT["outputSchema"];
+    callback:Function;
+}
 
 

@@ -270,7 +270,7 @@ class FunctionT(BaseMetadata):
     outputSchema: dict[str, Any] | None = None
     """
     An optional JSON Schema object defining the structure of the function's output
-    returned in the structuredContent field of a CallFunctionResult.
+    returned in the structuredResult field of a CallFunctionResult.
     """
     model_config = ConfigDict(extra="allow")
 

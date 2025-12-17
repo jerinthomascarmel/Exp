@@ -1,21 +1,21 @@
-"""Custom exceptions for FastMCP."""
+"""Custom exceptions for Exporter."""
 
 
-class FastMCPError(Exception):
-    """Base error for FastMCP."""
+class ExporterError(Exception):
+    """Base error for Exporter."""
 
 
-class ValidationError(FastMCPError):
+class ValidationError(ExporterError):
     """Error in validating parameters or return values."""
 
 
-class ResourceError(FastMCPError):
+class ResourceError(ExporterError):
     """Error in resource operations."""
 
 
-class FunctionError(FastMCPError):
+class FunctionError(ExporterError):
     """Error in function operations."""
 
 
 class InvalidSignature(Exception):
-    """Invalid signature for use with FastMCP."""
+    """Invalid signature for use with Exporter."""

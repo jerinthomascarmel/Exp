@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 
 class FunctionManager:
-    """Manages FastMCP functions."""
+    """Manages Exporter functions."""
 
     def __init__(
         self,

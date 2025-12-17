@@ -1,4 +1,4 @@
-"""Common types used across FastMCP."""
+"""Common types used across Exporter."""
 import base64
 from pathlib import Path
 

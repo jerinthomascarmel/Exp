@@ -1,26 +1,23 @@
-
 import anyio
 
-# from mcp.client.stdio import StdioServerParameters
-from exp.importer import MCPClient
-from exp.importer.stdio import StdioServerParameters
+from exp.importer import Importer
+from exp.importer.stdio import StdioParameters
 
 
 # Create server parameters for stdio connection
-server_params = StdioServerParameters(
+server_params = StdioParameters(
     command="uv",  # Using uv to run the server
-    # Server with completion support
     args=["run", "./server.py"],
-
 )
 
 
 async def main():
     """Run the completion client example."""
 
-    mcp_client = MCPClient(
+    mcp_client = Importer(
         server=server_params
     )
+    
     await mcp_client.run()
     print("MCP client running.")
 
@@ -29,20 +26,18 @@ async def main():
     # await mcp_client.initialize()
     # print("MCP client initialized.")
 
-    print('.............')
-    print(mcp_client._session._server_capabilities)
-    print('.............')
+    # print('.............')
+    # print(mcp_client._session._server_capabilities)
+    # print('.............')
 
     result = await mcp_client.call_function(
         "add",
         {"a": 5, "b": 7}
     )
-    print('.............')
-    print(mcp_client._session._server_capabilities.functions)
-    print('.............')
+
     print(f"Result of add(5, 7): {result}")
-    print(type(result.structuredContent))
-    print(type(result.structuredContent['result']))
+    # print(type(result.structuredResult))
+    # print(type(result.structuredResult['result']))
 
     await mcp_client.close()
     print('conn closed !')

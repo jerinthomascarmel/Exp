@@ -1,12 +1,10 @@
-"""Context injection utilities for FastMCP."""
+"""Context injection utilities for Exporter."""
 
 from __future__ import annotations
 
 
 from collections.abc import Callable
 from typing import Any
-
-
 
 
 def inject_context(

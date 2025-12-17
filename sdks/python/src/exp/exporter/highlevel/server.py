@@ -1,4 +1,4 @@
-"""FastMCP - A more ergonomic interface for MCP servers."""
+"""Exporter - A more ergonomic interface for MCP servers."""
 
 from __future__ import annotations as _annotations
 
@@ -13,7 +13,7 @@ import anyio
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-from exp.exporter.highlevel.functions import  FunctionManager
+from exp.exporter.highlevel.functions import FunctionManager
 from exp.exporter.highlevel.utilities.logging import configure_logging, get_logger
 
 from exp.exporter.lowlevel.server import Server as MCPServer
@@ -25,13 +25,13 @@ logger = get_logger(__name__)
 
 
 class Settings(BaseSettings):
-    """FastMCP server settings.
+    """Exporter server settings.
 
-    All settings can be configured via environment variables with the prefix FASTMCP_.
-    For example, FASTMCP_DEBUG=true will set debug=True.
+    All settings can be configured via environment variables with the prefix Exporter_.
+    For example, Exporter_DEBUG=true will set debug=True.
     """
     model_config = SettingsConfigDict(
-        env_prefix="FASTMCP_",
+        env_prefix="Exporter_",
         env_file=".env",
         env_nested_delimiter="__",
         nested_model_default_partial_update=True,
@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     warn_on_duplicate_functions: bool
 
 
-class FastMCP:
+class Exporter:
     def __init__(  # noqa: PLR0913
         self,
         debug: bool = False,
@@ -73,7 +73,7 @@ class FastMCP:
     def run(
         self
     ) -> None:
-        """Run the FastMCP server. Note this is a synchronous function.
+        """Run the Exporter server. Note this is a synchronous function.
 
         Args:
             transport: Transport protocol to use ("stdio", "sse", or "streamable-http")
@@ -94,7 +94,7 @@ class FastMCP:
         """Set up core MCP protocol handlers."""
         self._mcp_server.list_functions()(self.list_functions)
         # Note: we disable the lowlevel server's input validation.
-        # FastMCP does ad hoc conversion of incoming data before validating -
+        # Exporter does ad hoc conversion of incoming data before validating -
         # for now we preserve this for backwards compatibility.
         self._mcp_server.call_function(validate_input=True)(self.call_function)
         self._mcp_server.set_init()(self.list_functions)

@@ -1,0 +1,13 @@
+[project]
+name = "example1"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "export-py",
+]
+
+[tool.uv.sources]
+export-py = { path = "../../sdks/python", editable = true }
+

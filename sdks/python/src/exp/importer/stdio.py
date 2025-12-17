@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 PROCESS_TERMINATION_TIMEOUT = 2.0
 
 
-class StdioServerParameters(BaseModel):
+class StdioParameters(BaseModel):
     command: str
     """The executable to run to start the server."""
 
@@ -58,7 +58,7 @@ class StdioClient:
 
     def __init__(
             self,
-            server: StdioServerParameters):
+            server: StdioParameters):
         self.read_stream_writer, self.read_stream = anyio.create_memory_object_stream(
             0)
         self.write_stream, self.write_stream_reader = anyio.create_memory_object_stream(
@@ -73,7 +73,7 @@ class StdioClient:
         MemoryObjectSendStream[SessionMessage]
     ]:
         """Start the stdio transport."""
-       
+
         try:
             command = _get_executable_command(self.server.command)
             if self._process:
@@ -86,7 +86,6 @@ class StdioClient:
                 errlog=self.errlog,
                 cwd=self.server.cwd,
             )
-            
 
         except OSError:
             self._process = None
@@ -113,15 +112,14 @@ class StdioClient:
         return self.read_stream, self.write_stream
 
     async def stop(self):
-        
+
         if self._process is None:
             raise RuntimeError("Stdio transport not started")
-        
+
         if self.task_group:
             self.task_group.cancel_scope.cancel()
             await self.task_group.__aexit__(None, None, None)
             # await self.task_group.__aexit__(None, None, None)  # just written
-        
 
         if self._process.stdin:  # pragma: no branch
             try:
@@ -142,12 +140,11 @@ class StdioClient:
             # Process already exited, which is fine
             pass
 
-        
         await self.read_stream.aclose()
         await self.write_stream.aclose()
         await self.read_stream_writer.aclose()
         await self.write_stream_reader.aclose()
-        self.is_started =False
+        self.is_started = False
 
     async def stdout_reader(self):
         assert self._process.stdout, "Opened process is missing stdout"
@@ -208,7 +205,7 @@ def _get_executable_command(command: str) -> str:
         str: Platform-appropriate command
     """
     if sys.platform == "win32":  # pragma: no cover
-    
+
         return get_windows_executable_command(command)
     else:
         return command  # pragma: no cover

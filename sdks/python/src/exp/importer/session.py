@@ -6,7 +6,6 @@ from typing import Any
 from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
 
 
-
 import exp.types as types
 from exp.shared.message import SessionMessage
 from exp.shared.session import BaseSession
@@ -100,12 +99,12 @@ class ClientSession(BaseSession):
         if output_schema is not None:
             from jsonschema import SchemaError, ValidationError, validate
 
-            if result.structuredContent is None:
+            if result.structuredResult is None:
                 raise RuntimeError(
                     f"Function {name} has an output schema but did not return structured content"
                 )  # pragma: no cover
             try:
-                validate(result.structuredContent, output_schema)
+                validate(result.structuredResult, output_schema)
             except ValidationError as e:
                 raise RuntimeError(
                     f"Invalid structured content returned by function {name}: {e}")  # pragma: no cover

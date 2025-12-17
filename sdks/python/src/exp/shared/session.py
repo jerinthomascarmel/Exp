@@ -284,10 +284,6 @@ class BaseSession():
         ):
             try:
                 async for message in self._read_stream:
-                    with open('log.txt', 'a') as f:
-                        f.write(
-                            f"Received message at _receive_loop from {self.__class__} in :{message}\n")
-
                     if isinstance(message, Exception):  # pragma: no cover
                         await self._handle_incoming(message)
                     elif isinstance(message.message.root, JSONRPCRequest):

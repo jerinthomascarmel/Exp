@@ -1,3 +1,3 @@
-from .client import MCPClient
+from .client import Importer
 
-__all__ = ["MCPClient"]
+__all__ = ["Importer"]
