@@ -1,0 +1,22 @@
+[project]
+name = "export-py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anyio>=4.11.0",
+    "httpx>=0.28.1",
+    "jsonschema>=4.25.1",
+    "pydantic>=2.12.4",
+    "pydantic-settings>=2.12.0",
+    "pywin32>=311",
+    "rich>=14.2.0",
+    "typing>=3.10.0.0",
+    "typing-extensions>=4.15.0",
+]
+
+[function.hatch.build.targets.wheel]
+packages = ["src/mcp"]
+
+

@@ -1,0 +1,32 @@
+{
+  "name": "export-sdk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "tsc && node ./dist/index.js",
+    "build": "tsc",
+    "example1": "tsc && node ./dist/examples/example1/client.js",
+    "example2": "tsc && node ./dist/examples/example2/demo.js",
+    "example3": "tsc && node ./dist/examples/example3/functions.js",
+    "example4": "tsc && node ./dist/examples/example4/client.js",
+    "server4":"tsc && node ./dist/examples/example4/server.js"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "cross-spawn": "^7.0.5",
+    "json-schema-to-zod": "^2.6.1",
+    "json-schema-typed": "^8.0.2",
+    "typescript": "^5.9.3",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}

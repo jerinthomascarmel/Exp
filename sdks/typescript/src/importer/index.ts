@@ -1,0 +1,84 @@
+import { Protocol } from "../shared/protocol.js";
+import { Transport } from "../shared/transport.js";
+import { CallFunctionRequest ,
+    CallFunctionResultSchema ,
+    CompatibilityCallToolResultSchema,
+    ErrorCode ,
+    McpError ,
+    ListFunctionsResultSchema,
+    InitializeResultSchema,
+    ServerCapabilities,
+    } from "../types.js";
+
+import { StdioImporterTransport } from "../importer/stdio.js";
+    
+
+export class Importer extends Protocol{
+
+    private _serverCapabilities?: ServerCapabilities;
+
+    constructor(){
+        super() 
+    }
+
+    async import(transport:Transport){
+        // this function is for getting familiar names
+        await this.connect(transport);
+    }
+
+    async connect(transport: Transport) {
+        await super.connect(transport); 
+        // additional setup for Importer can be done here
+
+        try{
+            const result = await this.request(
+                {
+                    method: "initialize",
+                    params: {}
+                },
+                InitializeResultSchema
+            )
+
+            if (result === undefined) {
+                throw new Error(`Server sent invalid initialize result: ${result}`);
+            }
+
+            this._serverCapabilities = result.capabilities;
+
+        
+        }catch(error){
+            void this.close();
+            throw error;
+
+        }
+    }
+
+
+    async callFunction(params:CallFunctionRequest["params"],
+        resultSchema: typeof CallFunctionResultSchema | typeof CompatibilityCallToolResultSchema = CallFunctionResultSchema){
+        const result = await this.request({ method: "functions/call" , params } ,resultSchema);
+
+        if(result.isError){
+            throw new McpError(
+            ErrorCode.InvalidRequest,
+            `Function ${params.name} has an output schema but did not return structured content`);
+        }
+
+        if(!result.structuredResult){
+            throw new McpError(
+                ErrorCode.ParseError,
+                `Function never return anything`
+            )
+        }
+        console.log(result);
+        return result.structuredResult;
+    }
+
+    async listFunctions(){
+        if(this._serverCapabilities){
+            return this._serverCapabilities.functions;
+        }
+        const result = await this.request({ method: "functions/list" , params:{} } ,ListFunctionsResultSchema);
+        return result.functions; 
+    }
+}
