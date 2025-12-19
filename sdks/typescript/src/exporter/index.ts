@@ -39,18 +39,18 @@ export class Exporter extends Protocol{
     }
 
     // decorators 
-    export(fn : Function){
+    export(fn : (args: Record<string, any>) =>any ){
         // check the descriptor.value is a function or not. 
         if(!fn || typeof fn != 'function'){
             return fn;
         }
 
         let toolName = (fn as Function).name;
-        let jsonSchema = functionParser.parseFunctionJsonSchema(fn)
+        let jsonSchema = functionParser.parseFunctionJsonSchema(fn);
         this.registerFunction(
             toolName,
             {
-                inputSchema:jsonSchema["inputSchema"],
+                inputSchema: jsonSchema["inputSchema"],
                 outputSchema : jsonSchema["outputSchema"]
             },
             fn

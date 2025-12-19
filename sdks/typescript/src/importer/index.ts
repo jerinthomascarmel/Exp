@@ -46,25 +46,35 @@ export class Importer extends Protocol{
         }
     }
 
+    async callFunction(name:CallFunctionRequest["params"]["name"]){
+        const func = async (args:CallFunctionRequest["params"]["arguments"])=>{
+            
+            const result = await this.request({ method: "functions/call" ,
+                                                params: {name:name ,arguments:args } } ,
+                                                CallFunctionResultSchema);
 
-    async callFunction(params:CallFunctionRequest["params"],
-        resultSchema: typeof CallFunctionResultSchema | typeof CompatibilityCallToolResultSchema = CallFunctionResultSchema){
-        const result = await this.request({ method: "functions/call" , params } ,resultSchema);
+            if(result.isError){
+                throw new McpError(
+                ErrorCode.InvalidRequest,
+                `Function ${name} has an output schema but did not return structured content`);
+            }
 
-        if(result.isError){
-            throw new McpError(
-            ErrorCode.InvalidRequest,
-            `Function ${params.name} has an output schema but did not return structured content`);
+            if(!result.structuredResult){
+                throw new McpError(
+                    ErrorCode.ParseError,
+                    `Function never return anything`
+                )
+            }
+
+            return result.structuredResult;
         }
 
-        if(!result.structuredResult){
-            throw new McpError(
-                ErrorCode.ParseError,
-                `Function never return anything`
-            )
-        }
-        console.log(result);
-        return result.structuredResult;
+        return func;
+        
+    }
+
+    async getFunction(name:string){
+        return this.callFunction(name);
     }
 
     async listFunctions(){

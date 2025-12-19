@@ -13,8 +13,7 @@ class FunctionParser{
 
     constructor(){}
 
-    parseFunctionJsonSchema(func: Function): Pick<FunctionT , "inputSchema" | "outputSchema" >  {
-    
+    parseFunctionJsonSchema(func: (args:Record<string , any>)=>any ): Pick<FunctionT , "inputSchema" | "outputSchema" >  {
         const resultJsonSchema : Pick<FunctionT , "inputSchema" | "outputSchema"> ={
             inputSchema :EMPTY_OBJECT_JSON_SCHEMA,
             outputSchema : EMPTY_OBJECT_JSON_SCHEMA,
@@ -31,8 +30,9 @@ class FunctionParser{
         return resultJsonSchema;
     }
 
-    _parseFunctionInputSchema(func: Function) : FunctionT["inputSchema"] {
+    _parseFunctionInputSchema(func: (args:Record<string , any>)=>any ) : FunctionT["inputSchema"] {
         let resultSchema :FunctionT["inputSchema"] =EMPTY_OBJECT_JSON_SCHEMA;
+
          const str = func.toString();
          let unknownId = 0 ; 
 
@@ -54,34 +54,33 @@ class FunctionParser{
 
         if (!match?.[1]) return resultSchema;
         
-        const paramStr = match[1].trim();
+        let paramStr = match[1].trim();
         if (!paramStr) return resultSchema;
 
-        if (paramStr.startsWith('[') && paramStr.endsWith(']')){
-            return resultSchema;
+        if (!(paramStr.startsWith('{') && paramStr.endsWith('}'))){
+            throw new Error("must be an object with key , value as argument name and value !");
         }
 
-        if (paramStr.startsWith('{') && paramStr.endsWith('}')){
-            return resultSchema;
-        }
+       
+        paramStr = paramStr.slice(1,paramStr.length);
 
-        let parameters =paramStr.split(',')
-            .map(param => {
+        paramStr.split(',')
+            .forEach(param => {
                 const trimmed = param.trim();
-                if (paramStr.startsWith('[') && paramStr.endsWith(']')){
-                    return `unknown${unknownId++}`;
-                }
+                if(trimmed.includes(":")){
+                    // resultSchema.properties![trimmed] = {type: "object"}
 
-                if (paramStr.startsWith('{') && paramStr.endsWith('}')){
-                    return `unknown${unknownId++}`;
+                }else{
+                    resultSchema.properties![trimmed] = {type:["string", "number", "integer", "boolean", "array", "object", "null"]}
+                    resultSchema.required!.push(trimmed);
+                    return trimmed;
                 }
-                return trimmed;
             });
 
-        parameters.forEach((parameter :string) => {
-            resultSchema.properties![parameter] ={type:["string", "number", "integer", "boolean", "array", "object", "null"]}
-            resultSchema.required!.push(parameter)
-        });
+        // parameters.forEach((parameter :string) => {
+        //     resultSchema.properties![parameter] ={type:["string", "number", "integer", "boolean", "array", "object", "null"]}
+        //     resultSchema.required!.push(parameter)
+        // });
 
         return resultSchema;
     }

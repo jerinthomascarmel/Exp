@@ -30,10 +30,13 @@ async def main():
     # print(mcp_client._session._server_capabilities)
     # print('.............')
 
-    result = await mcp_client.call_function(
-        "add",
-        {"a": 5, "b": 7}
-    )
+    func = mcp_client.getFunction("add");
+    result =await func(5,6);
+
+    # result = await mcp_client.call_function(
+    #     "add",
+    #     {"a": 5, "b": 7}
+    # )
 
     print(f"Result of add(5, 7): {result}")
     # print(type(result.structuredResult))

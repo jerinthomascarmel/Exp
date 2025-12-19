@@ -3,6 +3,7 @@ from exp.importer.session import ClientSession
 from typing import Any
 from datetime import timedelta
 import exp.types as types
+from typing import Callable
 
 
 class Importer:
@@ -32,25 +33,31 @@ class Importer:
 
     async def call_function(
         self,
-        name: str,
-        arguments: dict[str, Any] | None = None,
-        read_timeout_seconds: timedelta | None = None,
-        *,
-        meta: dict[str, Any] | None = None,
+        name: str
     ) -> types.CallFunctionResult:
         """Call a function by name with arguments."""
-        if self._session is None:
-            raise RuntimeError("MCP client is not running")
 
-        return await self._session.call_function(
-            name,
-            arguments=arguments or {},
-            read_timeout_seconds=read_timeout_seconds,
-            meta=meta
-        )
+        async def func(*args, **kwargs):
+            if len(args) != 0:
+                raise RuntimeError(
+                    "you should call with kwargs , not with args ")
+
+            arguments: dict[str, Any] | None = kwargs
+
+            if self._session is None:
+                raise RuntimeError("MCP client is not running")
+
+            return await self._session.call_function(
+                name,
+                arguments=arguments or {},
+                meta=None
+            )
+        return func
+
+    def get_function(self, name: str) -> Callable[..., any]:
+        return self.call_function(name=name)
 
     async def list_functions(self) -> types.ListFunctionsResult:
-
         return await self._session.list_functions()
 
     async def initialize(self) -> None:
