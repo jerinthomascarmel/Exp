@@ -1,41 +1,42 @@
 
 import { FunctionT } from "../types.js";
 
-
-const EMPTY_OBJECT_JSON_SCHEMA = {
-    type: 'object' as const,
-    properties: {},
-    required:[]
-};
+enum Divider { 
+    comma = "," , 
+    colon = ":"
+}
 
 
 class FunctionParser{
+    EMPTY_OBJECT_JSON_SCHEMA = {
+        type: 'object' as const,
+        properties: {},
+        required: []
+    };
 
     constructor(){}
 
-    parseFunctionJsonSchema(func: (args:Record<string , any>)=>any ): Pick<FunctionT , "inputSchema" | "outputSchema" >  {
+    parseFunctionJsonSchema<FnArgs extends Record<string, any>> (func: (args:FnArgs)=>any ): Pick<FunctionT , "inputSchema" | "outputSchema" >  {
         const resultJsonSchema : Pick<FunctionT , "inputSchema" | "outputSchema"> ={
-            inputSchema :EMPTY_OBJECT_JSON_SCHEMA,
-            outputSchema : EMPTY_OBJECT_JSON_SCHEMA,
+            inputSchema :{ ...this.EMPTY_OBJECT_JSON_SCHEMA , properties: {} , required: [] },
+            outputSchema : { ...this.EMPTY_OBJECT_JSON_SCHEMA , properties: {} , required: [] }
         }
         // return resultJsonSchema;
         
         resultJsonSchema.inputSchema =this._parseFunctionInputSchema(func);
         resultJsonSchema.outputSchema = {
             type:'object' as const,
-            properties:{ result : { type : ["string", "number", "integer", "boolean", "array", "object", "null"]}},
+            properties:{ result : {}},
             required : ['result']
         }
 
         return resultJsonSchema;
     }
 
-    _parseFunctionInputSchema(func: (args:Record<string , any>)=>any ) : FunctionT["inputSchema"] {
-        let resultSchema :FunctionT["inputSchema"] =EMPTY_OBJECT_JSON_SCHEMA;
+    _parseFunctionInputSchema<FnArgs extends Record<string,any>>(func: (args:FnArgs)=>any ) : FunctionT["inputSchema"] {
+        let resultSchema :FunctionT["inputSchema"] ={ ...this.EMPTY_OBJECT_JSON_SCHEMA , properties: {} , required: [] }
 
          const str = func.toString();
-         let unknownId = 0 ; 
-
         // Handle arrow functions, function declarations, and method syntax
         const patterns = [
             /^\s*\w*\s*\(([^)]*)\)/,      // function foo(params)
@@ -61,28 +62,82 @@ class FunctionParser{
             throw new Error("must be an object with key , value as argument name and value !");
         }
 
-       
-        paramStr = paramStr.slice(1,paramStr.length);
 
-        paramStr.split(',')
-            .forEach(param => {
+        paramStr = paramStr.slice(1,paramStr.length-1);
+        const params = this._splitBy(paramStr,Divider.comma);
+
+    
+        params.forEach(param => {
                 const trimmed = param.trim();
                 if(trimmed.includes(":")){
-                    // resultSchema.properties![trimmed] = {type: "object"}
-
+                    let [ key , value , ...rest ] =  this._splitBy(trimmed , Divider.colon);
+                    resultSchema.properties![key] = this._parseUtil(value);
+                    resultSchema.required!.push(key);
                 }else{
-                    resultSchema.properties![trimmed] = {type:["string", "number", "integer", "boolean", "array", "object", "null"]}
+                    resultSchema.properties![trimmed] = {}
                     resultSchema.required!.push(trimmed);
                     return trimmed;
                 }
             });
 
-        // parameters.forEach((parameter :string) => {
-        //     resultSchema.properties![parameter] ={type:["string", "number", "integer", "boolean", "array", "object", "null"]}
-        //     resultSchema.required!.push(parameter)
-        // });
+        return resultSchema;
+    }
+
+    _parseUtil(objectStr : string) :FunctionT["inputSchema"]{
+        let resultSchema:FunctionT["inputSchema"] = { ...this.EMPTY_OBJECT_JSON_SCHEMA , properties: {} , required: [] }
+
+        objectStr = objectStr.trim();
+        objectStr = objectStr.slice(1,objectStr.length-1);
+        const params = this._splitBy(objectStr,Divider.comma);
+        
+        params.forEach(param => {
+                const trimmed = param.trim();
+                if(trimmed.includes(":")){
+                    let [ key , value , ...rest ] =  this._splitBy(trimmed , Divider.colon);
+                    resultSchema.properties![key] = this._parseUtil(value);
+                    resultSchema.required!.push(key);
+                }else{
+                    resultSchema.properties![trimmed] = {}
+                    resultSchema.required!.push(trimmed);
+                    return trimmed;
+                }
+            });
 
         return resultSchema;
+    }
+
+    // NEW: Smart comma splitter that respects nesting
+    _splitBy(str: string, divider : Divider): string[] {
+        const result: string[] = [];
+        let current = '';
+        let depth = 0;
+
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+
+            if (char === '{' || char === '[' || char === '(') {
+                depth++;
+                current += char;
+            } else if (char === '}' || char === ']' || char === ')') {
+                depth--;
+                current += char;
+            } else if (char === divider  && depth === 0) {
+                // Only split on commas at depth 0
+                if (current.trim()) {
+                    result.push(current.trim());
+                }
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+
+        // Add the last segment
+        if (current.trim()) {
+            result.push(current.trim());
+        }
+
+        return result;
     }
 }
 

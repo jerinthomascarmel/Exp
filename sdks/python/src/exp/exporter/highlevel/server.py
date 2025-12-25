@@ -120,7 +120,7 @@ class Exporter:
         """Call a function by name with arguments."""
         return await self._function_manager.call_function(name, arguments, convert_result=True)
 
-    async def get_function(self, name: str) -> MCPFunction | None:
+    def get_function(self, name: str) -> MCPFunction | None:
         """Get function by name. """
         function = self._function_manager.get_function(name)
 

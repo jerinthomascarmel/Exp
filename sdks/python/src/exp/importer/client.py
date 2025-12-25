@@ -3,7 +3,7 @@ from exp.importer.session import ClientSession
 from typing import Any
 from datetime import timedelta
 import exp.types as types
-from typing import Callable
+from typing import Callable, Awaitable
 
 
 class Importer:
@@ -31,13 +31,13 @@ class Importer:
         if self._stdio_client.is_started:
             await self._stdio_client.stop()
 
-    async def call_function(
+    def call_function(
         self,
         name: str
-    ) -> types.CallFunctionResult:
+    ) -> Callable[..., Awaitable[types.CallFunctionResult]]:
         """Call a function by name with arguments."""
 
-        async def func(*args, **kwargs):
+        async def func(*args, **kwargs) -> types.CallFunctionResult:
             if len(args) != 0:
                 raise RuntimeError(
                     "you should call with kwargs , not with args ")
@@ -54,7 +54,7 @@ class Importer:
             )
         return func
 
-    def get_function(self, name: str) -> Callable[..., any]:
+    def get_function(self, name: str) -> Callable[[str], Callable[..., Awaitable[types.CallFunctionResult]]]:
         return self.call_function(name=name)
 
     async def list_functions(self) -> types.ListFunctionsResult:

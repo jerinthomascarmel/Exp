@@ -9,9 +9,10 @@ const main =async ()=>{
   }
 
   const importer = new Importer(params); 
-  await importer.import();
-  const result = await importer.callFunction({name:"add", arguments:{'a':1 , 'b':7} })
-  console.log(result)
+  await importer.connect();
+  const add = importer.getFunction("add");
+  const result = await add({a:10 , b:20});
+  console.log("Result of add function: " , result);
   importer.close();
 }
 

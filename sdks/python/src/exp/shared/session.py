@@ -216,6 +216,7 @@ class BaseSession():
 
         request_data = request.model_dump(
             by_alias=True, mode="json", exclude_none=True)
+        print(request_data)
 
         try:
             jsonrpc_request = JSONRPCRequest(

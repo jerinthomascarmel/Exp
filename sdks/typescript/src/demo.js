@@ -2,14 +2,32 @@
 
 import { functionParser } from "../dist/validation/utils.js"
 
-function hello({a ,  d : [a , b]}){
+import { zodToJsonSchema } from "zod-to-json-schema";
+
+import { z } from "zod";
+
+const zSchema = z.object({ name : z.any() , age:z.object({ name : z.string()}) , price : z.any()});
+
+const jsonSchema = zodToJsonSchema(zSchema);
+console.log(JSON.stringify(jsonSchema));
+console.log('\n');
+
+// const zodCode = jsonSchemaToZod(jsonSchema as any,{ module: "cjs" });
+// const zSchemaV2 = eval(zodCode) as z.ZodTypeAny;
+// const parseResult = zSchemaV2.safeParse([1, "2", { a: 3 }]);
+// console.log(parseResult);
+
+
+// function hello({name: { age , superval : { jerin } } , address }){
+//     return "hello"
+// }
+
+function hello({name , age }){
     return "hello"
 }
 
+console.log(hello({name : "jerin" , age: "pari" }))
 
-function hello2(obj){
-    return "hello2"
-}
 
-let jsonSchema = functionParser.parseFunctionJsonSchema(hello2);
-console.log(JSON.stringify(jsonSchema));
+let jsonSchema2 = functionParser._parseFunctionInputSchema(hello);
+console.log(JSON.stringify(jsonSchema2));

@@ -46,8 +46,8 @@ export class Importer extends Protocol{
         }
     }
 
-    async callFunction(name:CallFunctionRequest["params"]["name"]){
-        const func = async (args:CallFunctionRequest["params"]["arguments"])=>{
+    callFunction(name:CallFunctionRequest["params"]["name"]){
+        const func= async (args:CallFunctionRequest["params"]["arguments"]) : Promise<any>=>{
             
             const result = await this.request({ method: "functions/call" ,
                                                 params: {name:name ,arguments:args } } ,
@@ -73,7 +73,7 @@ export class Importer extends Protocol{
         
     }
 
-    async getFunction(name:string){
+    getFunction(name:string){
         return this.callFunction(name);
     }
 

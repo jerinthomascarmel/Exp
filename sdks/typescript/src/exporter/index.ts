@@ -7,7 +7,7 @@ import
     { 
         CallFunctionRequestSchema,
         CallFunctionResult,
-        ErrorCode,
+        ErrorCode,  
         McpError ,
         ListFunctionsResult,
         ListFunctionsRequestSchema ,
@@ -38,8 +38,7 @@ export class Exporter extends Protocol{
         await super.connect();
     }
 
-    // decorators 
-    export(fn : (args: Record<string, any>) =>any ){
+    export<Args extends Record<string,any>>(fn : (args: Args) =>any ){
         // check the descriptor.value is a function or not. 
         if(!fn || typeof fn != 'function'){
             return fn;
@@ -55,7 +54,6 @@ export class Exporter extends Protocol{
             },
             fn
         )
-            
     }
 
     registerFunction(
@@ -181,7 +179,7 @@ export class Exporter extends Protocol{
             const cb = fn.callback as Function;
             let  cbResult : any |  Promise<any> ;
             try {
-                cbResult = await Promise.resolve(cb(...(args ? Object.values(args) : [])));
+                cbResult = await Promise.resolve(cb(args ? args : {}));
 
                 result = {
                     content:[ { type:"text" , text : "result is in structured Result"}], 
