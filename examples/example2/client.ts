@@ -11,10 +11,11 @@ const main =async ()=>{
 
   const importer = new Importer(params); 
   await importer.connect();
+
   const greeting = importer.getFunction("greeting");
   const result = await greeting({name:"jerin" , age: 22} )
   console.log(result)
-  console.log(typeof result)
+
   importer.close();
   
 }

@@ -60,7 +60,7 @@ class ClientSession(BaseSession):
         _meta: types.RequestParams.Meta | None = None
         if meta is not None:
             _meta = types.RequestParams.Meta(**meta)
-        print('p2')
+
         result = await self.send_request(
             types.ClientRequest(
                 types.CallFunctionRequest(
@@ -71,8 +71,6 @@ class ClientSession(BaseSession):
             types.CallFunctionResult,
             request_read_timeout_seconds=read_timeout_seconds,
         )
-
-        print('p3')
 
         if not result.isError:
             await self._validate_function_result(name, result)

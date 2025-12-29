@@ -131,7 +131,6 @@ export abstract class Protocol {
         }
 
         this._responseHandlers.delete(messageId);
-        console.log('response' , response)
 
         if (isJSONRPCResponse(response)) {
             handler(response);

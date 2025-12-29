@@ -19,31 +19,15 @@ async def main():
     )
     
     await mcp_client.run()
-    print("MCP client running.")
 
-    # must to initialize before calling anything
-    # please not about cwd . the process must be started in the directory where server.py is located.
-    # await mcp_client.initialize()
-    # print("MCP client initialized.")
+    lists = await mcp_client.list_functions()
+    print("Available functions:", lists)
 
-    # print('.............')
-    # print(mcp_client._session._server_capabilities)
-    # print('.............')
-
-    func = mcp_client.get_function("add");
-    result =await func(a=5,b=6);
-
-    # result = await mcp_client.call_function(
-    #     "add",
-    #     {"a": 5, "b": 7}
-    # )
-
-    print(f"Result of add(5, 7): {result}")
-    # print(type(result.structuredResult))
-    # print(type(result.structuredResult['result']))
+    # func = mcp_client.get_function("add");
+    # result =await func(a=5,b=7);
+    # print(f"Result of add(5, 7): {result}")
 
     await mcp_client.close()
-    print('conn closed !')
 
 
 if __name__ == "__main__":

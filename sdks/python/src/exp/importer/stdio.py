@@ -162,7 +162,6 @@ class StdioClient:
 
                     for line in lines:
                         try:
-                            print('message got from server:', line)
                             message = types.JSONRPCMessage.model_validate_json(
                                 line)
                         except Exception as exc:  # pragma: no cover

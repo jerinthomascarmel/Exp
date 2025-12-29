@@ -1,0 +1,35 @@
+---
+title: What is Exp? 
+description: Introducing Exp, an sdk for cross-language function export and import.
+icon: CircleQuestionMark
+---
+
+Exp was created because we never saw a package which provides export and import functions out of the box.
+Now with Exp, you can easily export functions from one programming language and import them in another.
+
+## Why Exp?
+In modern software development, it's common to use multiple programming languages within a single project.
+Previously , developers had to rely on complex workarounds such as using REST APIs, RPC frameworks, or message queues to facilitate communication between different languages.
+These methods can be less efficient ,cumbersome, error-prone, and difficult to maintain.
+
+Exp simplifies this process by providing a straightforward SDK that allows developers to export functions from one language and import them into another seamlessly.
+With Exp, you can focus on writing your application logic without worrying about the intricacies of cross-language communication.
+
+### Drawbacks of existing solutions
+There exists multiple solustions for cross-language communication such as REST APIs, gRPC and message queues.
+These communication methods are going over all the TCP layer, which introduces significant overhead and latency.
+Moreover, these methods often require additional infrastructure and maintenance, making them less ideal for simple function calls between languages.
+
+Consider a scenario where you have a Python function that needs to be called from a JavaScript application.
+Using REST APIs or gRPC would involve setting up a server, defining endpoints, and handling serialization and deserialization of data.
+This adds unnecessary complexity and overhead to the development process.
+
+Exp addresses these issues by providing a lightweight SDK that abstracts away the complexities of cross-language communication.
+It allows developers to export functions directly from one language and import them into another with minimal setup and
+configuration.
+
+## Key Features
+- Its best for communication between languages within the same machine. 
+Its not designed for distributed systems.
+- Never needs to setup servers or endpoints. Helps to avoid writing code for endpoints and serialization.
+- No server endpoints needed, reducing latency and improving performance for function calls between languages.

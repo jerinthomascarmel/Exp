@@ -1,0 +1,17 @@
+{
+  "title": "Exp Sdk",
+  "description": "The docs of Exp Sdk",
+  "icon": "Building",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "what-is-exp",
+    "---Examples---",
+    "...(examples)",
+    "markdown",
+    "---Behind the Scene---",
+    "architecture",
+    "ts-js-functions-rule"
+  ]
+}

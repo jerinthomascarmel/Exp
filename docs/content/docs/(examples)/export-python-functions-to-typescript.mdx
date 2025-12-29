@@ -1,0 +1,140 @@
+---
+title: Export Python functions to Typescript
+description: Learn how to export Python functions and use them in your Typescript codebase using Exp.
+---
+
+
+## Introduction
+In this example, we will demonstrate how to export functions written in Python and use them in a Typescript codebase using Exp.
+
+For simplicity, we will create a simple Python function that adds two numbers and then export it to be used in a Typescript file. 
+
+
+## Step 1: Create the Python Function
+First, create a Python file named `server.py` and define a function that adds two numbers:
+
+```python
+# server.py
+def add(a: int, b: int) -> int:
+    return a + b
+```
+## Step 2: Export the Python Function
+Next, we will use Exp to export the `add` function so that it can be used in Typescript.
+
+### Installation
+Make sure you have Exp installed. You can install it using pip or using uv:
+<Callout>Disclaimer : You can create virtual environment for isolation as your wish</Callout>
+
+
+
+```bash tab="pip"
+pip install exp
+```
+
+```bash tab="uv"
+uv init 
+uv add exp
+```
+
+
+We modify the `server.py` file to include the export functionality:
+
+
+```python
+from exp.exporter import Exporter
+
+mcp = Exporter()
+
+
+@mcp.function()
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+## Step 3: Create the Typescript File
+Now, create a Typescript file named `client.ts` where we will import and use the exported `add` function:
+
+### Setup the Typescript / Javascript Project
+First, ensure you have a Typescript project set up. You can initialize a new project and install the necessary dependencies:
+```bash tab="Typescript"
+npm init -y
+npm install export-ts typescript ts-node @types/node --save-dev
+npx tsc --init
+```
+
+```bash tab="Javascript"
+npm init -y 
+npm install export-ts --save
+```
+
+Additionally , Please ensure that typescript `tsconfig.json` should have settings to `target` as `ES6` or above and module as `CommonJS` or `ESNext` based on your environment.
+
+### Create ts/js code to import and use the function
+
+```typescript tab="Typescript"
+// client.ts
+import { Importer } from "export-ts"
+import  type { StdioParameters } from "export-ts";
+
+(async ()=>{
+  const params : StdioParameters ={
+    command: "python",
+    args: ["server.py"]
+  }
+
+  const importer = new Importer(params); 
+  await importer.connect();
+
+  const add = importer.getFunction("add");
+  const result = await add({a:1 , b: 22} )
+  console.log(result)
+  importer.close();
+})();
+```
+
+```javascript tab="Javascript"
+// client.js
+const { Importer } = require("export-ts");
+(async () => {
+    const params = {
+        command: "python",
+        args: ["server.py"],
+    };
+    const importer = new Importer(params);
+    await importer.connect();
+
+    const add = importer.getFunction("add");
+    const result = await add({a:5, b:10});
+    console.log(result); // Output: 15
+
+    importer.close();
+})();
+```
+The params object specifies the command to run the Python script.
+It may be different based on your environment. For example, you may need to use `uv run server.py` if you are using `uv`
+as your package manager.
+
+Also , when you see this code , you can observe that we are calling the `add` function with an object containing properties `a` and `b`.
+You may confuse why we are passing an object instead of two separate arguments.
+
+You can refer to [TS/JS functions rule](./ts-js-functions-rule) to understand more about this.
+
+## Step 4: Run the Typescript/Javascript File
+Finally, run the Typescript or Javascript file in the root folder to see the result:
+
+```bash tab="Typescript"
+npx tsc
+node dist/client.js
+```
+
+```bash tab="Javascript"
+
+node client.js
+```
+
+If you want to get this examples , you can check this [Repo](https://github.com/jerinthomascarmel/Exp/tree/main/examples)

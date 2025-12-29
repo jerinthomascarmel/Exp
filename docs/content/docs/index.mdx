@@ -1,0 +1,81 @@
+---
+title: Quick Start
+description: Getting Started with Exp
+icon: Album
+---
+
+## Introduction
+
+Exp is an **SDK**, providing export and import functionalities which helps to communicate 
+between different programming languages.
+
+For example , you have a functions written in Python and you want to use it in you Javascript codebase, 
+here comes Exp to help you achieve that. It provides methods to export functions from one languages  to another.
+
+## Quick Start 
+To get started with Exp, I am going to tell you how to export a simple function written in Python and import it in Javascript.
+
+Consider you have a simple function in Python that adds two numbers.
+
+```python
+# add.py
+def add(a, b):
+    return a + b
+```
+
+To export this function using Exp, you can modify your Python code as follows:
+
+```python
+# add.py
+from exp.exporter import Exporter
+exp = Exporter()
+
+@exp.function()
+def add(a, b):
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+> **NOTE:** The functions you need to export may have dependencies on other functions or libraries. In that case, try to use a virtual environment to manage your dependencies, or use `uv` for faster package management.
+
+
+Now, you can import this function in your Javascript/Typescript codebase using Exp's importer.
+
+```javascript
+// main.js
+import { Importer } from "export-ts";
+(async () => {
+    const params = {
+        command: "python",
+        args: ["add.py"],
+    };
+    const importer = new Importer(params);
+    await importer.connect();
+
+    const add = importer.getFunction("add");
+    const result = await add(5, 10);
+    console.log(result); // Output: 15
+
+    importer.close();
+})();
+
+```
+Here, we first import the `Importer` class from the `export-ts` package. We then create an instance of the `Importer` class, 
+providing the command to run the Python script. After establishing a connection, we retrieve the exported `add` function and invoke it with
+two numbers, logging the result to the console.
+
+The command to run the python script may vary based on your environment.
+For example, you may need to use `uv run add.py` if you are using `uv` as your package manager.
+
+That's it!🎉🎉 You have successfully exported a Python function and 
+imported it in your Javascript codebase using Exp.
+
+
+<Callout title="Want to get more examples?">
+  Read our examples [examples](/docs/ui/example1) section for more use-cases and examples.
+</Callout>
+
+
+
